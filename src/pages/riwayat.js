@@ -5,14 +5,6 @@ import { Form, Button, Modal, Table } from "react-bootstrap";
 const Riwayat = () => {
   const [orderList, setOrderList] = useState([]);
   const [menuList, setMenuList] = useState([]);
-  const [newOrder, setNewOrder] = useState({
-    customer_name: "",
-    table_number: "",
-    order_date: "",
-    order_detail: [],
-  });
-  const [showModal, setShowModal] = useState(false);
-  const [editOrder, setEditOrder] = useState(null); // State to track the edited order item
 
   useEffect(() => {
     fetchData();
@@ -41,97 +33,6 @@ const Riwayat = () => {
     }
   };
 
-  const handleInputChange = (e) => {
-    setNewOrder({ ...newOrder, [e.target.name]: e.target.value });
-  };
-
-  const handleAdd = () => {
-    setEditOrder(null); // Reset editOrder state
-    setShowModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setNewOrder({
-      customer_name: "",
-      table_number: "",
-      order_date: "",
-      order_detail: [],
-    });
-  };
-
-  const handleEdit = (order) => {
-    setEditOrder(order); // Set the order item to be edited
-    setShowModal(true);
-  };
-
-  const handleSave = async (e) => {
-    e.preventDefault();
-
-    if (editOrder) {
-      await updateOrder(editOrder.id);
-    } else {
-      await addOrder();
-    }
-
-    handleCloseModal();
-  };
-
-  const addOrder = async () => {
-    try {
-      const response = await axios.post(
-        "http://172.16.100.39:8080/order",
-        newOrder,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      console.log(response.data);
-      fetchData();
-    } catch (error) {
-      console.error("Error adding order:", error);
-    }
-  };
-
-  const updateOrder = async (id) => {
-    try {
-      const response = await axios.put(
-        `http://172.16.100.39:8080/order/${id}`,
-        newOrder,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      console.log(response.data);
-      fetchData();
-    } catch (error) {
-      console.error("Error updating order:", error);
-    }
-  };
-
-  const handleDrop = async (id) => {
-    try {
-      const response = await axios.delete(
-        `http://172.16.100.39:8080/order/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      console.log(response.data);
-      fetchData();
-    } catch (error) {
-      console.error("Error deleting order:", error);
-    }
-  };
-
   const calculateTotalPrice = (order) => {
     let totalPrice = 0;
     order.order_detail.forEach((detail) => {
@@ -145,24 +46,11 @@ const Riwayat = () => {
     return menuList.find((item) => item.id === foodId);
   };
 
+  
+
   return (
     <div className="container">
       <h4>Order History</h4>
-
-      <Modal show={showModal} onHide={handleCloseModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>{editOrder ? "Edit Order" : "Add Order"}</Modal.Title>
-        </Modal.Header>
-        <Form onSubmit={handleSave}>
-          <Modal.Body>
-            {/* Add form fields for order details */}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleCloseModal}>Close</Button>
-            <Button variant="primary" type="submit">{editOrder ? "Save Changes" : "Add Order"}</Button>
-          </Modal.Footer>
-        </Form>
-      </Modal>
 
       <Table striped bordered hover>
         <thead>
@@ -186,7 +74,7 @@ const Riwayat = () => {
                 <ul>
                   {order.order_detail?.map((detail) => (
                     <li key={detail.id}>
-                      {findMenuItem(detail.food_id) && findMenuItem(detail.food_id).name}
+                      {findMenuItem(detail.food_id) && findMenuItem(detail.food_id).name} : {detail.quantity}
                     </li>
                   ))}
                 </ul>

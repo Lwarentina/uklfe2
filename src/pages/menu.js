@@ -148,7 +148,6 @@ const Menu = () => {
   return (
     <div className="container">
       <h4>Hot Chicken Menu</h4>
-
       <Form onSubmit={handleSearch}>
         <Form.Group controlId="search">
           <Form.Control
