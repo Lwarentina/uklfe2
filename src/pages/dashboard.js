@@ -10,7 +10,7 @@ const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    localStorage.setItem("orderDetail", JSON.stringify(orderDetail));
+    localStorage.setItem("orderDetail", JSON.stringify(orderDetail)); 
   }, [orderDetail]);
 
   useEffect(() => {
